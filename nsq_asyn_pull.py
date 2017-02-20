@@ -8,6 +8,7 @@ nsq_ip = ''
 nsq_port = 4150
 
 buf = []
+
 class nsqAPI(object):
 
     def pull(self, topic, channel, runFunc, **args):

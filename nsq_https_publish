@@ -26,11 +26,20 @@ class nsqClient():
         }
         
     def create_topic_channel(self, topic, channel):
-        print commands.getstatusoutput(self.exe_cmds.get('create_topic') \
+        res = commands.getstatusoutput(self.exe_cmds.get('create_topic') \
          %(self.nsqd_https_address,topic))
-        print commands.getstatusoutput(self.exe_cmds.get('create_channel') \
+        if not res[1]:
+            print 'Creating topic error. Response is %s' %res
+        
+        res = commands.getstatusoutput(self.exe_cmds.get('create_channel') \
          %(self.nsqd_https_address,topic,channel))
+        if not res[1]:
+            print res
+            print 'Creating channel error. Response is %s' %res
 
     def publish(self, message, topic):
-        print commands.getstatusoutput(self.exe_cmds.get('publish') \
+        res = commands.getstatusoutput(self.exe_cmds.get('publish') \
             %(message,self.nsqd_https_address,topic))
+        if res[1] != 'OK':
+            print res
+            print 'Publishing message error. Response is %s' %res

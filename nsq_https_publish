@@ -1,0 +1,36 @@
+#!/usr/bin/python
+#coding:utf-8
+
+import sys
+import commands
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+class nsqClient():
+
+    def __init__(self):
+        nsqd_ip = ''
+        nsqd_https_port = 4152
+        self.nsqd_https_address = '%s:%s' %(nsqd_ip, nsqd_https_port)
+
+        self.exe_cmds = {
+        'create_topic': """curl --cert ./certs/cert.pem --key ./certs/key.pem --insecure -s \
+ -X POST -L 'https://%s/topic/create?topic=%s' """ ,
+
+        'create_channel': """curl --cert ./certs/cert.pem --key ./certs/key.pem --insecure -s \
+ -X POST -L 'https://%s/channel/create?topic=%s&channel=%s'""",
+
+        'publish': """curl --cert ./certs/cert.pem --key ./certs/key.pem --insecure -s \
+ -d %s https://%s/pub?topic=%s """
+        }
+        
+    def create_topic_channel(self, topic, channel):
+        print commands.getstatusoutput(self.exe_cmds.get('create_topic') \
+         %(self.nsqd_https_address,topic))
+        print commands.getstatusoutput(self.exe_cmds.get('create_channel') \
+         %(self.nsqd_https_address,topic,channel))
+
+    def publish(self, message, topic):
+        print commands.getstatusoutput(self.exe_cmds.get('publish') \
+            %(message,self.nsqd_https_address,topic))
